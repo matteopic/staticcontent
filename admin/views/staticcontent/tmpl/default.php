@@ -11,7 +11,7 @@
 			<td class="center">
 				<p><?php echo JText::_('COM_STATICCONTENT_HTML_GENERATE_HTML_MESSAGE'); ?></p>
 			</td>
-		</td>	
+		</tr>	
 	<?php else: ?>
 		<?php foreach($this->items as $item): ?>
 		<tr class="">
