@@ -12,7 +12,7 @@ abstract class StaticContentHelperDocument
 		$body = $page->content;
 		$domDocument = new DOMDocument();
 		$domDocument->loadHTML($body);
-		
+
 		$base = $domDocument->getElementsByTagName('base');		
 		
 		//replace base
@@ -34,11 +34,14 @@ abstract class StaticContentHelperDocument
 		
 		foreach ($links as $link) {
 			$linkHref = $link->getAttribute('href');
-			if (!empty($rootURL)) {
-				$cleanLinkHref = str_replace(JURI::root(true).'/', '', $linkHref);
+			$cleanLinkHref = self::rewrite($linkHref);
+			self::log('Link ' . $linkHref . ' -> ' . $cleanLinkHref);
+			/*if (!empty($rootURL)) {
+				$cleanLinkHref = self::str_replace_first(JURI::root(true).'/', '', $linkHref);
+				self::log('Link ' . $linkHref . ' -> ' . $cleanLinkHref);
 			} else {
 				$cleanLinkHref = $linkHref;
-			}
+			}*/
 			if (strpos($linkHref,'format=feed') !== false) {
 				$cleanLinkHref = 'feed.xml';
 			}
@@ -47,11 +50,18 @@ abstract class StaticContentHelperDocument
 		}
 		foreach ($images as $img) {
 			$imgHref = $img->getAttribute('src');
-			
-			$cleanImgHref = str_replace(str_replace(JURI::base(true),'',JURI::base()), '', $imgHref);
-			if (!empty($baseURL))
+			$cleanImgHref = self::rewrite($imgHref);
+			self::log('Image ' . $imgHref . ' -> ' . $cleanImgHref);
+
+			/*$cleanImgHref = str_replace(str_replace($baseURL,'',JURI::base()), '', $imgHref);
+			self::log('Image s1 ' . $imgHref . ' -> ' . $cleanImgHref);
+			if (!empty($baseURL)){
 				$cleanImgHref = str_replace(JURI::base(true).'/', '', $cleanImgHref);
+				self::log('Image s2 ' . $cleanImgHref);
+			}
 			$cleanImgHref = str_replace(JURI::base(true), '', $cleanImgHref);
+			self::log('Image s3 ' . $cleanImgHref);
+			*/
 			$img->setAttribute('src',$cleanImgHref);
 			$body = str_replace('src="'.$imgHref.'"','src="'.$cleanImgHref.'"',$body);
 			
@@ -59,11 +69,16 @@ abstract class StaticContentHelperDocument
 		}
 		foreach ($scripts as $script) {
 			$scriptHref = $script->getAttribute('src');
-			if (!empty($rootURL)) {
-				$cleanScriptHref = str_replace(JURI::root(true).'/', '', $scriptHref);
+			/*if (!empty($rootURL)) {
+				$cleanScriptHref = self::str_replace_first(JURI::root(true).'/', '', $scriptHref);
+				self::log('Script ' . $scriptHref . ' -> ' . $cleanScriptHref);
 			} else {
 				$cleanScriptHref = $scriptHref;
-			}
+			}*/
+
+			$cleanScriptHref = self::rewrite($scriptHref);
+			self::log('Script ' . $scriptHref . ' -> ' . $cleanScriptHref);
+			
 			$body = str_replace('src="'.$scriptHref.'"','src="'.$cleanScriptHref.'"',$body);
 			self::copyFile($script, 'src');
 		}
@@ -79,6 +94,14 @@ abstract class StaticContentHelperDocument
 		return $body;
 	}
 	
+	static public function str_replace_first($search, $replace, $subject){
+		$pos = strpos($subject, $search);
+		if($pos !== false){
+			$subject = substr_replace($subject, $replace, $pos, strlen($search));
+		}
+		return $subject;
+	}
+
 	static public function fixMenuLinks($body,$menuItems)
 	{
 		foreach ($menuItems['menu'] as $menuItem)
@@ -222,6 +245,21 @@ abstract class StaticContentHelperDocument
 				self::log("Cant find file {$sourceFilePath}");
 			}
 		}
+	}
+	
+	
+	static private function rewrite($url)
+	{
+		$root = JURI::root() . '/';
+		$ctxPath = JURI::root(true) . '/';
+		if( strpos($url, $root) === 0){
+			return substr($url, strlen($root));
+		}else if(strpos($url, $ctxPath) === 0){
+			return substr($url, strlen($ctxPath));
+		}else{
+			return $url;
+		}
+
 	}
 	
 	static private function log($message)

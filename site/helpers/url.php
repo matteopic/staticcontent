@@ -62,12 +62,17 @@ abstract class StaticContentHelperUrl {
             return $url;
         }
 
+        $pre = $url;
+        $count = 1;
+        
         //remove root url
         $url = str_replace(JURI::root(), '', $url);
         //remove base
         $url = str_replace(JURI::base(true) . '/', '', $url);
         $url = str_replace(JURI::base(true), '', $url);
 
+        error_log('getRelativeLink ' . $pre . ' -> ' . $url);
+        
         return $url;
     }
 
@@ -82,6 +87,9 @@ abstract class StaticContentHelperUrl {
             return $url;
         }
 
+        $pre = $url;
+        $count = 1;
+        
         //remove root url
         $url = str_replace(JURI::root(), '', $url);
         //remove base
@@ -91,6 +99,8 @@ abstract class StaticContentHelperUrl {
         //strip format
         $url = self::stripFormat($url);
 
+        error_log('getFullLink ' . $pre . ' -> ' . $url);
+        
         return $url;
     }
 
