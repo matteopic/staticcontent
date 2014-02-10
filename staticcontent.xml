@@ -32,6 +32,8 @@
 	<languages folder="admin">
 		<language tag="en-GB">language/en-GB.com_staticcontent.ini</language>
 		<language tag="en-GB">language/en-GB.com_staticcontent.sys.ini</language>
+		<language tag="it-IT">language/it-IT.com_staticcontent.ini</language>
+		<language tag="it-IT">language/it-IT.com_staticcontent.sys.ini</language>		
 	</languages>
     </administration>
 </extension>
