@@ -206,8 +206,11 @@ abstract class StaticContentHelperDocument
 							
 							foreach($data_array[0] as $img) {
 								$img = trim($img);
+								self::log("processing css content $img");
+								
 								$removeDirs = substr_count($img,'./');
-								$removeDirs += substr_count($img,'../');
+								$removeDirs2 = substr_count($img,'../');
+								
 								$clean_path = str_replace('../','',$img);
 								$clean_path = str_replace('"','',$clean_path);
 								$clean_path = str_replace("'",'',$clean_path);
@@ -232,7 +235,7 @@ abstract class StaticContentHelperDocument
 										die(JText::sprintf('COM_STATICCONTENT_MSG_FAILURE_COPY_FILE',$sourceFilePath));
 									}
 								} else {
-									self::log("Cant copy file {$sourceFilePath}");
+									self::log("Cant copy file {$sourceFilePath}  derived from url $url");
 								}
 							}
 						}
@@ -242,7 +245,7 @@ abstract class StaticContentHelperDocument
 					die(JText::sprintf('COM_STATICCONTENT_MSG_FAILURE_COPY_FILE',$sourceFilePath));
 				}
 			} else {
-				self::log("Cant find file {$sourceFilePath}");
+				self::log("Cant find file {$sourceFilePath} derived from url $url");
 			}
 		}
 	}
@@ -250,13 +253,21 @@ abstract class StaticContentHelperDocument
 	
 	static private function rewrite($url)
 	{
-		$root = JURI::root() . '/';
+		// $root = http://host:port/path/to/joomla/
+		$root = JURI::root();  
+		
+		// $ctxPath = /path_to_joomla/
 		$ctxPath = JURI::root(true) . '/';
+		
+		//self::log("Rewriting url: $url root: $root, ctxPath: $ctxPath");
+		
 		if( strpos($url, $root) === 0){
 			return substr($url, strlen($root));
-		}else if(strpos($url, $ctxPath) === 0){
+		}
+		else if(strpos($url, $ctxPath) === 0){
 			return substr($url, strlen($ctxPath));
-		}else{
+		}
+		else{
 			return $url;
 		}
 
