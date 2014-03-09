@@ -171,10 +171,26 @@ abstract class StaticContentHelperUrl {
      * @return formated string
      */
     static public function addFormat($url) {
-        $format = '.html';
-        $url = self::stripFormat($url);
-
-        return $url . $format;
+    	$lowerUrl = strtolower($url);
+    	if(
+    			StaticContentHelperUrl::endsWith($lowerUrl, 'jpg') ||
+    			StaticContentHelperUrl::endsWith($lowerUrl, 'jpeg') ||
+    			StaticContentHelperUrl::endsWith($lowerUrl, 'png') ||
+    			StaticContentHelperUrl::endsWith($lowerUrl, 'gif')
+    	){
+    		return $url;
+    	}else{
+    		error_log("adding .html to $url");
+    		$format = '.html';
+    		$url = self::stripFormat($url);
+    		
+    		return $url . $format;    		
+    	}
+    }
+    
+    static private function endsWith($haystack, $needle)
+    {
+    	return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
     }
 
 }

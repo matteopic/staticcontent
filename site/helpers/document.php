@@ -51,7 +51,7 @@ abstract class StaticContentHelperDocument
 		foreach ($images as $img) {
 			$imgHref = $img->getAttribute('src');
 			$cleanImgHref = self::rewrite($imgHref);
-			self::log('Image ' . $imgHref . ' -> ' . $cleanImgHref);
+			//self::log('Image ' . $imgHref . ' -> ' . $cleanImgHref);
 
 			/*$cleanImgHref = str_replace(str_replace($baseURL,'',JURI::base()), '', $imgHref);
 			self::log('Image s1 ' . $imgHref . ' -> ' . $cleanImgHref);
@@ -77,7 +77,7 @@ abstract class StaticContentHelperDocument
 			}*/
 
 			$cleanScriptHref = self::rewrite($scriptHref);
-			self::log('Script ' . $scriptHref . ' -> ' . $cleanScriptHref);
+			//self::log('Script ' . $scriptHref . ' -> ' . $cleanScriptHref);
 			
 			$body = str_replace('src="'.$scriptHref.'"','src="'.$cleanScriptHref.'"',$body);
 			self::copyFile($script, 'src');
@@ -196,18 +196,39 @@ abstract class StaticContentHelperDocument
 				JFolder::create(dirname($filePath));
 				//copy file
 				if (JFile::copy($sourceFilePath, $filePath)) {
+					self::log('Copy ' . $sourceFilePath . ' -> ' . $filePath);
+					
 					//copy all url(*) data
 					if (strtolower( JFile::getExt($sourceFilePath) ) == 'css') {
 						$css_file_content = JFile::read($sourceFilePath);
 						preg_match_all('/(url|URL)\(.*?\)/i', $css_file_content, $data_array);
 						if (!empty($data_array[0])) {
-							$baseSourceFilePath = dirname($sourceFilePath).DIRECTORY_SEPARATOR;
-							$baseFilePath = dirname($filePath).DIRECTORY_SEPARATOR;
+							self::log("processing css file $sourceFilePath");
+							$baseSourceFilePath = dirname($sourceFilePath);
+							$baseFilePath = dirname($filePath);
 							
 							foreach($data_array[0] as $img) {
 								$img = trim($img);
-								self::log("processing css content $img");
 								
+								//$lastSlashIndex = strrpos($sourceFilePath,DIRECTORY_SEPARATOR);
+								//$sourceDir = substr($sourceFilePath, 0, $lastSlashIndex);
+								$parenthesisOpenIndex = strpos($img, '(');
+								$parenthesisCloseIndex = strrpos($img, ')');
+								$clean_path = substr($img, 
+										$parenthesisOpenIndex + 1, 
+										$parenthesisCloseIndex -1 - $parenthesisOpenIndex 
+								);
+								$clean_path = str_replace('"','',$clean_path);
+								$clean_path = str_replace("'",'',$clean_path);
+
+								//if($clean_path[0] != '.' && $clean_path[0] != '/'){
+								//	$clean_path = './' . $clean_path;
+								//}
+
+								//self::log("processing css content $img");
+								//self::log("SourceDir $sourceDir");
+								self::log("  found resource $clean_path");
+/*
 								$removeDirs = substr_count($img,'./');
 								$removeDirs2 = substr_count($img,'../');
 								
@@ -227,15 +248,18 @@ abstract class StaticContentHelperDocument
 								$filePath = $filePath.$clean_path;
 								$sourceFilePath = JPath::clean($sourceFilePath);
 								$filePath = JPath::clean($filePath);
-								
-								if (JFile::exists($sourceFilePath)) {
+								*/
+								$copyFrom = $baseSourceFilePath . DIRECTORY_SEPARATOR . $clean_path;
+								$copyTo = $baseFilePath . DIRECTORY_SEPARATOR . $clean_path;
+								self::log("    copy to $copyTo");
+								if (JFile::exists($copyFrom)) {
 									//creating folders
-									JFolder::create(dirname($filePath));
-									if (!JFile::copy($sourceFilePath, $filePath)) {
-										die(JText::sprintf('COM_STATICCONTENT_MSG_FAILURE_COPY_FILE',$sourceFilePath));
+									JFolder::create(dirname($copyTo));
+									if (!JFile::copy($copyFrom, $copyTo)) {
+										die(JText::sprintf('COM_STATICCONTENT_MSG_FAILURE_COPY_FILE',$copyFrom));
 									}
 								} else {
-									self::log("Cant copy file {$sourceFilePath}  derived from url $url");
+									self::log("Cant copy file {$copyFrom} derived from url $url");
 								}
 							}
 						}
@@ -286,7 +310,7 @@ abstract class StaticContentHelperDocument
 		// Add the logger.
 		JLog::addLogger(
 		    array(
-		        'text_file' => 'com_statiscontent.'.$date.'.php'
+		        'text_file' => 'com_staticcontent.'.$date.'.php'
 		    )
 		);
 		
