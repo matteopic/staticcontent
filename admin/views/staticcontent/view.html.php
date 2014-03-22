@@ -59,8 +59,10 @@ class StaticContentViewStaticContent extends View
 			}
 
 			if(!empty($this->items)) {
-				ComStaticContentHelperToolbar::custom('html.delete','delete','delete','COM_STATICCONTENT_TOOLBAR_DELETE', false);
-				ComStaticContentHelperToolbar::custom('html.download','archive','archive','COM_STATICCONTENT_TOOLBAR_DOWNLOAD', false);
+				//ComStaticContentHelperToolbar::custom('html.delete','delete','delete','COM_STATICCONTENT_TOOLBAR_DELETE', false);
+				//ComStaticContentHelperToolbar::custom('html.download','archive','archive','COM_STATICCONTENT_TOOLBAR_DOWNLOAD', false);
+				ComStaticContentHelperToolbar::delete();
+				ComStaticContentHelperToolbar::download();
 			}
 		}
 

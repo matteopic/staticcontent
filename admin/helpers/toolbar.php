@@ -32,5 +32,14 @@ class ComStaticContentHelperToolbar extends JToolBarHelper {
         $bar = JToolBar::getInstance('toolbar');
         $bar->appendButton('Link', 'refresh', JText::_('COM_STATICCONTENT_TOOLBAR_CREATE'), 'javascript:requestAllItems();');
     }
+    
+    public static function delete() {
+    	JToolbarHelper::custom('html.delete','delete','delete','COM_STATICCONTENT_TOOLBAR_DELETE', false);
+    	//JToolbarHelper::custom('delete','delete','delete','COM_STATICCONTENT_TOOLBAR_DELETE', false);
+    }
+    public static function download() {
+    	JToolbarHelper::custom('html.download','archive','archive','COM_STATICCONTENT_TOOLBAR_DOWNLOAD', false);
+    	//JToolbarHelper::custom('download','archive','archive','COM_STATICCONTENT_TOOLBAR_DOWNLOAD', false);
+    }
 
 }

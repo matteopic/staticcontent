@@ -8,7 +8,7 @@
  */
 defined('_JEXEC') or die('Restricted access');
 
-class StaticContentControllerHTML extends Controller {
+class StaticContentControllerHtml extends Controller {
 
     /**
      * @var		string	The default view.

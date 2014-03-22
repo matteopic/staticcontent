@@ -18,7 +18,6 @@ if (JVERSION >= '3.0')
 	class_alias('JControllerLegacy', 'Controller');
 	class_alias('JModelLegacy', 'Model');
 	class_alias('JViewLegacy', 'View');
-	
 }
 else
 {
@@ -41,5 +40,5 @@ jimport('joomla.filesystem.file');
 require_once 'controller.php';
 
 $controller = Controller::getInstance('StaticContent');
-$controller->execute(JRequest::getCmd('task'));
+$controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();
