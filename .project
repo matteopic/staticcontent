@@ -31,4 +31,16 @@
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>admin_staticcontent</name>
+			<type>2</type>
+			<location>/Applications/MAMP/htdocs/ritratto/administrator/components/com_staticcontent</location>
+		</link>
+		<link>
+			<name>public_staticcontent</name>
+			<type>2</type>
+			<location>/Applications/MAMP/htdocs/ritratto/components/com_staticcontent</location>
+		</link>
+	</linkedResources>
 </projectDescription>
